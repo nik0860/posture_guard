@@ -88,7 +88,7 @@ PAGE = r"""<!DOCTYPE html>
 
   .frame {
     width: min(640px, 92vw);
-    aspect-ratio: 4 / 3;
+    aspect-ratio: 16 / 9; /* Changed from 4/3 to match standard webcam */
     background: var(--panel);
     border: 1px solid #26313f;
     border-radius: 10px;
@@ -102,7 +102,7 @@ PAGE = r"""<!DOCTYPE html>
   .frame canvas {
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: contain; /* Changed from cover to prevent cropping */
     display: none;
   }
 
@@ -441,10 +441,22 @@ PAGE = r"""<!DOCTYPE html>
       ctx.strokeStyle = statusColor;
       ctx.lineWidth = 8;
       ctx.strokeRect(4, 4, w - 8, h - 8);
-      ctx.font = "bold 26px -apple-system, Segoe UI, Roboto, sans-serif";
+      
+      // --- UPDATED TEXT DRAWING (Centered with background) ---
+      ctx.font = "bold 24px -apple-system, Segoe UI, Roboto, sans-serif";
+      ctx.textAlign = "center"; 
+      ctx.textBaseline = "middle";
+
+      const textX = w / 2;
+      const textY = 40; 
+      
+      const textWidth = ctx.measureText(statusText).width;
+      ctx.fillStyle = "rgba(0, 0, 0, 0.65)";
+      ctx.fillRect(textX - (textWidth / 2) - 16, textY - 20, textWidth + 32, 40);
+
       ctx.fillStyle = statusColor;
-      ctx.textBaseline = "top";
-      ctx.fillText(statusText, 20, 18);
+      ctx.fillText(statusText, textX, textY);
+      // --------------------------------------------------------
 
       setBadge(statusText, statusColor);
     }
